@@ -1,0 +1,72 @@
+:root {
+    /* 浅色模式 (Light Mode) 默认值 */
+    --bg-main: #ffffff;
+    --bg-sidebar: #f8fafc;
+    --bg-surface: #f1f5f9;
+    --bg-surface-hover: #e2e8f0;
+    --border-color: #e2e8f0;
+    --text-main: #0f172a;
+    --text-mute: #64748b;
+    --primary-color: #4f46e5;
+}
+
+/* 深色模式 (Dark Mode) 覆盖值 - Catppuccin Mocha 风格 */
+.dark {
+    --bg-main: #1e1e2e;
+    --bg-sidebar: #181825;
+    --bg-surface: #313244;
+    --bg-surface-hover: #45475a;
+    --border-color: #45475a;
+    --text-main: #cdd6f4;
+    --text-mute: #a6adc8;
+    --primary-color: #89b4fa;
+    /* 稍微亮一点的蓝色适配深色模式 */
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-mute);
+}
+
+/* 拖拽区域动画 */
+.drag-active {
+    border-color: var(--primary-color) !important;
+    background-color: rgba(99, 102, 241, 0.05);
+    transform: scale(0.99);
+}
+
+.titlebar-drag-region {
+    -webkit-app-region: drag;
+}
+
+.no-drag {
+    -webkit-app-region: no-drag;
+}
+
+[v-cloak] {
+    display: none;
+}
+
+/* Switch Animation */
+.toggle-checkbox:checked {
+    right: 0;
+    border-color: var(--primary-color);
+}
+
+.toggle-checkbox:checked+.toggle-label {
+    background-color: var(--primary-color);
+}
