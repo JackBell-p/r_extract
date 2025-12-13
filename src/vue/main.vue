@@ -94,7 +94,7 @@
                                 或点击下方按钮选择文件<br>支持 .zip, .rar, .7z 等格式
                             </p>
 
-                            <button @click="openFile"
+                            <button @click="open_file"
                                 class="px-8 py-3 bg-app-primary hover:opacity-90 text-white text-sm font-medium rounded-full shadow-lg shadow-app-primary/30 transition transform active:scale-95 flex items-center gap-2">
                                 <i class="ph-folder-open"></i>
                                 <span>选择文件</span>
@@ -116,10 +116,10 @@
                                 <tbody class="text-sm divide-y divide-app-border">
                                     <tr v-for="(file, index) in files" :key="index"
                                         class="group hover:bg-app-surface transition cursor-default select-none"
-                                        :class="{ 'bg-app-primary/10': selectedFiles.includes(index) }"
-                                        @click="toggleSelect(index, $event)">
+                                        :class="{ 'bg-app-primary/10': selected_files.includes(index) }"
+                                        @click="toggle_select(index, $event)">
                                         <td class="px-4 py-3 flex items-center gap-3">
-                                            <i :class="getFileIcon(file.type)"
+                                            <i :class="get_file_icon(file.type)"
                                                 class="text-xl opacity-80 group-hover:opacity-100"></i>
                                             <span class="text-app-text font-medium truncate max-w-[200px]">{{ file.name
                                                 }}</span>
@@ -137,7 +137,7 @@
                     <div v-if="files.length > 0 && current_view !== 'settings'"
                         class="h-16 border-t border-app-border bg-app-sidebar px-6 flex items-center justify-between transition-colors duration-300">
                         <div class="text-xs text-app-mute">
-                            已选中 {{ selectedFiles.length }} 项
+                            已选中 {{ selected_files.length }} 项
                         </div>
                         <div class="flex items-center gap-3">
                             <button @click="files = []"
@@ -177,6 +177,7 @@ let current_view = ref('home');
 let is_dark_mode = ref(true);
 let drag_over = ref(false);
 let files = ref([]);
+let selected_files = ref([]);
 
 function close_app() {
 
@@ -190,4 +191,13 @@ function handle_drop() {
 
 }
 
+let open_file = () => handle_drop();
+
+function toggle_select(index: number, event: MouseEvent) {
+
+}
+
+function get_file_icon() {
+
+}
 </script>
