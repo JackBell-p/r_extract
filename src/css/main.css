@@ -1,5 +1,5 @@
 :root {
-    /* 浅色模式 (Light Mode) 默认值 */
+    /* Light Mode Default Value. */
     --bg-main: #ffffff;
     --bg-sidebar: #f8fafc;
     --bg-surface: #f1f5f9;
@@ -10,7 +10,7 @@
     --primary-color: #4f46e5;
 }
 
-/* 深色模式 (Dark Mode) 覆盖值 - Catppuccin Mocha 风格 */
+/* Dark Mode Override Value - Catppuccin Mocha Style. */
 .dark {
     --bg-main: #1e1e2e;
     --bg-sidebar: #181825;
@@ -20,10 +20,10 @@
     --text-main: #cdd6f4;
     --text-mute: #a6adc8;
     --primary-color: #89b4fa;
-    /* 稍微亮一点的蓝色适配深色模式 */
+    /* A slightly brighter blue for dark mode adaptation. */
 }
 
-/* 自定义滚动条 */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -42,7 +42,7 @@
     background: var(--text-mute);
 }
 
-/* 拖拽区域动画 */
+/* Drag-and-Drop Zone Animation. */
 .drag-active {
     border-color: var(--primary-color) !important;
     background-color: rgba(99, 102, 241, 0.05);
@@ -61,7 +61,7 @@
     display: none;
 }
 
-/* Switch Animation */
+/* Switch Animation. */
 .toggle-checkbox:checked {
     right: 0;
     border-color: var(--primary-color);
