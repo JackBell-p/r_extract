@@ -122,7 +122,7 @@
                                             <i :class="get_file_icon(file.type)"
                                                 class="text-xl opacity-80 group-hover:opacity-100"></i>
                                             <span class="text-app-text font-medium truncate max-w-[200px]">{{ file.name
-                                                }}</span>
+                                            }}</span>
                                         </td>
                                         <td class="px-4 py-3 text-app-mute text-right font-mono text-xs">{{ file.size }}
                                         </td>
@@ -173,11 +173,19 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 
+interface FileItem {
+    name: string,
+    size: number,
+    type: string,
+    length: number
+}
+
 let current_view = ref('home');
 let is_dark_mode = ref(true);
 let drag_over = ref(false);
-let files = ref([]);
+let files = ref<FileItem[]>([]);
 let selected_files = ref([]);
+let processing = ref(false);
 
 function close_app() {
 
@@ -188,7 +196,7 @@ function toggle_theme() {
 }
 
 function handle_drop() {
-
+    
 }
 
 let open_file = () => handle_drop();
@@ -197,7 +205,7 @@ function toggle_select(index: number, event: MouseEvent) {
 
 }
 
-function get_file_icon() {
+function get_file_icon(file_type: string) {
 
 }
 </script>
