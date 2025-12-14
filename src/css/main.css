@@ -1,74 +1,104 @@
 @import "tailwindcss";
 
+/* Define custom color variables based on theme */
 :root {
-    /* Light Mode Default Value. */
-    --bg-main: #ffffff;
-    --bg-sidebar: #f8fafc;
-    --bg-surface: #f1f5f9;
-    --bg-surface-hover: #e2e8f0;
-    --border-color: #e2e8f0;
-    --text-main: #0f172a;
-    --text-mute: #64748b;
-    --primary-color: #4f46e5;
+    /* Light Mode Defaults (Fallbacks) */
+    --app-bg: #f1f5f9;
+    --app-text: #1e293b;
+    --app-mute: #64748b;
+    --app-border: #e2e8f0;
+    --app-sidebar: #ffffff;
+    --app-surface: #ffffff;
+    --app-surface-hover: #f8fafc;
+    --app-primary: #4f46e5;
 }
 
-/* Dark Mode Override Value - Catppuccin Mocha Style. */
-.dark {
-    --bg-main: #1e1e2e;
-    --bg-sidebar: #181825;
-    --bg-surface: #313244;
-    --bg-surface-hover: #45475a;
-    --border-color: #45475a;
-    --text-main: #cdd6f4;
-    --text-mute: #a6adc8;
-    --primary-color: #89b4fa;
-    /* A slightly brighter blue for dark mode adaptation. */
+.dark-theme {
+    /* Dark Mode */
+    --app-bg: #1e293b;
+    --app-text: #f8fafc;
+    --app-mute: #94a3b8;
+    --app-border: #334155;
+    --app-sidebar: #1f2937;
+    /* Slightly different sidebar */
+    --app-surface: #334155;
+    --app-surface-hover: #374151;
+    --app-primary: #6366f1;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+/* Apply variables to utility classes */
+body {
+    background-color: var(--app-bg);
+    color: var(--app-text);
+    transition: background-color 0.3s, color 0.3s;
 }
 
-::-webkit-scrollbar-track {
-    background: transparent;
+.bg-app-bg {
+    background-color: var(--app-bg);
 }
 
-::-webkit-scrollbar-thumb {
-    background: var(--border-color);
-    border-radius: 4px;
+.text-app-text {
+    color: var(--app-text);
 }
 
-::-webkit-scrollbar-thumb:hover {
-    background: var(--text-mute);
+.text-app-mute {
+    color: var(--app-mute);
 }
 
-/* Drag-and-Drop Zone Animation. */
-.drag-active {
-    border-color: var(--primary-color) !important;
-    background-color: rgba(99, 102, 241, 0.05);
-    transform: scale(0.99);
+.border-app-border {
+    border-color: var(--app-border);
 }
 
+.bg-app-sidebar {
+    background-color: var(--app-sidebar);
+}
+
+.bg-app-surface {
+    background-color: var(--app-surface);
+}
+
+.hover\:bg-app-surface-hover:hover {
+    background-color: var(--app-surface-hover);
+}
+
+.bg-app-primary {
+    background-color: var(--app-primary);
+}
+
+.shadow-app-primary\/30 {
+    box-shadow: 0 10px 15px -3px rgb(99 102 241 / 0.3), 0 4px 6px -4px rgb(99 102 241 / 0.3);
+}
+
+.shadow-app-primary\/20 {
+    box-shadow: 0 1px 3px 0 rgb(99 102 241 / 0.2), 0 1px 2px -1px rgb(99 102 241 / 0.2);
+}
+
+.bg-app-primary\/10 {
+    background-color: rgba(99, 102, 241, 0.1);
+}
+
+/* Custom animation for settings view */
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fade-in 0.3s ease-out forwards;
+}
+
+/* Mocked titlebar drag region */
 .titlebar-drag-region {
-    -webkit-app-region: drag;
+    cursor: grab;
 }
 
 .no-drag {
-    -webkit-app-region: no-drag;
-}
-
-[v-cloak] {
-    display: none;
-}
-
-/* Switch Animation. */
-.toggle-checkbox:checked {
-    right: 0;
-    border-color: var(--primary-color);
-}
-
-.toggle-checkbox:checked+.toggle-label {
-    background-color: var(--primary-color);
+    cursor: default;
 }
