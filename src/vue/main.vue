@@ -1,6 +1,6 @@
 <template>
 
-    <body
+    <div
         class="bg-app-bg text-app-text font-sans antialiased overflow-hidden transition-colors duration-300 h-screen w-screen flex flex-col">
 
         <div id="app" v-cloak class="h-full flex flex-col">
@@ -27,10 +27,19 @@
                 <aside
                     class="w-64 bg-app-sidebar flex flex-col border-r border-app-border transition-colors duration-300">
                     <div class="p-4 space-y-1">
-                        <nav-item icon="ph-house" label="首页" :active="current_view === 'home'"
-                            @click="current_view = 'home'"></nav-item>
-                        <nav-item icon="ph-clock-counter-clockwise" label="最近文件" :active="current_view === 'recent'"
-                            @click="current_view = 'recent'"></nav-item>
+                        <div class="flex items-center gap-3 px-3 py-3 rounded-lg cursor-pointer transition-all duration-200 text-sm font-medium 
+                       " :class="current_view === 'home' ? 'bg-app-primary text-white shadow-md' : 'text-app-mute hover:bg-app-surface-hover hover:text-app-text'"
+                            @click="current_view = 'home'">
+                            <!-- Home Icon (Lucide SVG) -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-5 h-5">
+                                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                                <polyline points="9 22 9 12 15 12 15 22" />
+                            </svg>
+
+                            <span>首页</span>
+                        </div>
                     </div>
 
                     <!-- Bottom: Settings. -->
@@ -38,7 +47,14 @@
                         <div @click="current_view = 'settings'"
                             class="flex items-center gap-3 px-3 py-3 rounded-lg cursor-pointer transition-all duration-200"
                             :class="current_view === 'settings' ? 'bg-app-primary text-white shadow-md' : 'text-app-mute hover:bg-app-surface-hover hover:text-app-text'">
-                            <i class="ph-gear text-xl"></i>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-5 h-5">
+                                <path
+                                    d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 0 2.73l-.15.1a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1 0-2.73l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+
                             <span class="text-sm font-medium">设置</span>
                         </div>
                     </div>
@@ -167,7 +183,7 @@
                 </div>
             </div>
         </div>
-    </body>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -182,7 +198,7 @@ interface FileItem {
 }
 
 let current_view = ref('home');
-let is_dark_mode = ref(true);
+let is_dark_mode = ref(false);
 let drag_over = ref(false);
 let files = ref<FileItem[]>([]);
 let selected_files = ref([]);
@@ -193,11 +209,12 @@ function close_app() {
 }
 
 function toggle_theme() {
-
+    is_dark_mode.value = !is_dark_mode.value;
+    document.body.classList.toggle("dark-theme", is_dark_mode.value);
 }
 
 function handle_drop() {
-    
+
 }
 
 let open_file = () => handle_drop();
