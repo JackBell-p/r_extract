@@ -10,7 +10,8 @@
                     <span>R Extract</span>
                 </div>
                 <div class="flex items-center gap-3 no-drag">
-                    <button @click="minimize" class="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-400 transition"></button>
+                    <button @click="minimize"
+                        class="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-400 transition"></button>
                     <button @click="close_app" class="w-3 h-3 rounded-full bg-red-500 hover:bg-red-400 transition">
                     </button>
                 </div>
@@ -100,14 +101,18 @@
                         <div v-if="files.length === 0"
                             class="absolute inset-0 flex flex-col items-center justify-center transition-all duration-300 m-6 rounded-2xl border-2 border-dashed"
                             :class="drag_over ? 'border-app-primary bg-app-primary/5' : 'border-transparent'">
+                            
+                            <img src="../assets/images/drag-and-drop-add-new-file-concept-illustration-flat-design-eps10-modern-graphic-element-for-landing-page-empty-state-ui-infographic-icon-vector.jpg" alt="Cloud Upload"
+                                class="w-32 h-32 object-contain mb-6 transition-transform duration-300 drop-shadow-xl"
+                                :class="drag_over ? 'scale-110' : ''" draggable="false" />
 
                             <h2 class="text-2xl font-semibold text-app-text mb-2">拖放文件至此</h2>
                             <p class="text-app-mute text-sm mb-8 text-center max-w-xs">
-                                或点击下方按钮选择文件<br>支持 .zip, .rar, .7z 等格式
+                                或点击下方按钮选择文件, 支持 .zip, .rar, .7z 等格式
                             </p>
 
                             <button @click="open_file"
-                                class="px-8 py-3 bg-app-primary hover:opacity-90 text-white text-sm font-medium rounded-full shadow-lg shadow-app-primary/30 transition transform active:scale-95 flex items-center gap-2">
+                                class="px-8 py-3 bg-app-primary hover:opacity-90 text-white text-sm font-medium rounded-full transition transform active:scale-95 flex items-center gap-2">
                                 <i class="ph-folder-open"></i>
                                 <span>选择文件</span>
                             </button>
@@ -155,7 +160,7 @@
                             <button @click="files = []"
                                 class="px-4 py-2 text-sm text-app-mute hover:text-app-text transition">清空</button>
                             <button
-                                class="px-6 py-2 bg-app-primary hover:opacity-90 text-white text-sm font-medium rounded-lg shadow-lg shadow-app-primary/20 transition flex items-center gap-2">
+                                class="px-6 py-2 bg-app-primary hover:opacity-90 text-white text-sm font-medium rounded-lg transition flex items-center gap-2">
                                 <i class="ph-export"></i>
                                 <span>解压</span>
                             </button>
