@@ -1,16 +1,13 @@
 <template>
-
     <div
         class="bg-app-bg text-app-text font-sans antialiased overflow-hidden transition-colors duration-300 h-screen w-screen flex flex-col">
-
-        <div id="app" v-cloak class="h-full flex flex-col">
-
+        <div v-cloak class="h-full flex flex-col">
             <!-- 1. Title Bar (for Tauri window dragging) -->
             <header
                 class="h-10 bg-app-sidebar flex items-center justify-between px-4 border-b border-app-border titlebar-drag-region select-none transition-colors duration-300">
                 <div class="flex items-center gap-2 text-sm font-medium text-app-mute">
                     <i class="ph-fill ph-package text-app-primary text-lg"></i>
-                    <span>Archiver Pro</span>
+                    <span>R Extract</span>
                 </div>
                 <div class="flex items-center gap-3 no-drag">
                     <button class="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-400 transition"></button>
@@ -187,6 +184,7 @@
 </template>
 
 <script setup lang="ts">
+import { invoke } from '@tauri-apps/api/core';
 import { onMounted, ref } from 'vue';
 
 
@@ -205,7 +203,7 @@ let selected_files = ref([]);
 let processing = ref(false);
 
 function close_app() {
-
+    invoke("exit");
 }
 
 function toggle_theme() {

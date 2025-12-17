@@ -26,13 +26,6 @@
     --app-primary: #6366f1;
 }
 
-/* Apply variables to utility classes */
-body {
-    background-color: var(--app-bg);
-    color: var(--app-text);
-    transition: background-color 0.3s, color 0.3s;
-}
-
 .bg-app-bg {
     background-color: var(--app-bg);
 }
@@ -73,10 +66,6 @@ body {
     box-shadow: 0 1px 3px 0 rgb(99 102 241 / 0.2), 0 1px 2px -1px rgb(99 102 241 / 0.2);
 }
 
-.bg-app-primary\/10 {
-    background-color: rgba(99, 102, 241, 0.1);
-}
-
 /* Custom animation for settings view */
 @keyframes fade-in {
     from {
@@ -96,9 +85,11 @@ body {
 
 /* Mocked titlebar drag region */
 .titlebar-drag-region {
-    cursor: grab;
+    app-region: drag;
+    cursor: default;
 }
 
 .no-drag {
+    app-region: no-drag;
     cursor: default;
 }
