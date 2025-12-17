@@ -6,3 +6,10 @@ pub fn exit(app: tauri::AppHandle) {
         let _ = window.close();
     }
 }
+
+#[tauri::command]
+pub fn minimize(app: tauri::AppHandle) {
+    if let Some(window) = app.get_webview_window("main") {
+        let _ = window.minimize();
+    }
+}

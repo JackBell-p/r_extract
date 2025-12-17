@@ -10,8 +10,7 @@
                     <span>R Extract</span>
                 </div>
                 <div class="flex items-center gap-3 no-drag">
-                    <button class="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-400 transition"></button>
-                    <button class="w-3 h-3 rounded-full bg-green-500 hover:bg-green-400 transition"></button>
+                    <button @click="minimize" class="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-400 transition"></button>
                     <button @click="close_app" class="w-3 h-3 rounded-full bg-red-500 hover:bg-red-400 transition">
                     </button>
                 </div>
@@ -223,5 +222,9 @@ function toggle_select(index: number, event: MouseEvent) {
 
 function get_file_icon(file_type: string) {
 
+}
+
+function minimize() {
+    invoke("minimize");
 }
 </script>
