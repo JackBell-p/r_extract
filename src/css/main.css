@@ -85,3 +85,7 @@
     app-region: no-drag;
     cursor: default;
 }
+
+* {
+    user-select: none;
+}

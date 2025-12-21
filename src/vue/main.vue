@@ -101,8 +101,8 @@
                         <div v-if="files.length === 0"
                             class="absolute inset-0 flex flex-col items-center justify-center transition-all duration-300 m-6 rounded-2xl border-2 border-dashed"
                             :class="drag_over ? 'border-app-primary bg-app-primary/5' : 'border-transparent'">
-                            
-                            <img src="../assets/images/drag-and-drop-add-new-file-concept-illustration-flat-design-eps10-modern-graphic-element-for-landing-page-empty-state-ui-infographic-icon-vector.jpg" alt="Cloud Upload"
+
+                            <img src="../assets/images/drag-and-drop-add-new-file-concept-illustration-flat-design-eps10-modern-graphic-element-for-landing-page-empty-state-ui-infographic-icon-vector.png" alt="Cloud Upload"
                                 class="w-32 h-32 object-contain mb-6 transition-transform duration-300 drop-shadow-xl"
                                 :class="drag_over ? 'scale-110' : ''" draggable="false" />
 
@@ -113,7 +113,6 @@
 
                             <button @click="open_file"
                                 class="px-8 py-3 bg-app-primary hover:opacity-90 text-white text-sm font-medium rounded-full transition transform active:scale-95 flex items-center gap-2">
-                                <i class="ph-folder-open"></i>
                                 <span>选择文件</span>
                             </button>
                         </div>
@@ -216,7 +215,7 @@ function toggle_theme() {
 }
 
 function handle_drop() {
-
+    drag_over.value = false;
 }
 
 let open_file = () => handle_drop();
