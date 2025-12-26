@@ -2,6 +2,7 @@
     <div
         class="bg-app-bg text-app-text font-sans antialiased overflow-hidden transition-colors duration-300 h-screen w-screen flex flex-col"
     >
+        <toast_manager />
         <div v-cloak class="h-full flex flex-col">
             <!-- 1. Title Bar (for Tauri window dragging) -->
             <header
@@ -169,9 +170,7 @@
                     <div
                         v-else
                         class="flex-1 overflow-auto relative"
-                        @dragover.prevent="drag_over = true"
-                        @dragleave.prevent="drag_over = false"
-                        @drop.prevent="handle_drop"
+                        id="drop-zone"
                     >
                         <!-- Empty State / Drag-and-Drop Hint. -->
                         <div
@@ -329,7 +328,11 @@
 
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/core";
-import { onMounted, ref } from "vue";
+import { UnlistenFn } from "@tauri-apps/api/event";
+import { getCurrentWebview } from "@tauri-apps/api/webview";
+import { onMounted, onUnmounted, ref } from "vue";
+import toast_manager from "./components/toast_manager.vue";
+import { toast } from "../ts/utils/toast.ts";
 
 interface FileItem {
     name: string;
@@ -344,6 +347,9 @@ let drag_over = ref(false);
 let files = ref<FileItem[]>([]);
 let selected_files = ref([]);
 let processing = ref(false);
+let rect: DOMRect;
+let unlisten: UnlistenFn;
+let archive_exts = ["zip", "rar", "7z"];
 
 function close_app() {
     invoke("exit");
@@ -361,7 +367,7 @@ function handle_drop(payload: DragEvent) {
 }
 
 function open_file() {
-    console.log(1);
+    toast.success("good", 4000);
 }
 
 function toggle_select(index: number, event: MouseEvent) {}
@@ -371,4 +377,54 @@ function get_file_icon(file_type: string) {}
 function minimize() {
     invoke("minimize");
 }
+
+onMounted(async () => {
+    let drop_zone = document.getElementById("drop-zone");
+    if (!drop_zone) return;
+
+    rect = drop_zone.getBoundingClientRect();
+
+    unlisten = await getCurrentWebview().onDragDropEvent((event) => {
+        if (event.payload.type === "leave") {
+            drag_over.value = false;
+            return;
+        }
+
+        let { x, y } = event.payload.position;
+        let inside =
+            x >= rect.left &&
+            x <= rect.right &&
+            y >= rect.top &&
+            y <= rect.bottom;
+
+        if (!inside) {
+            drag_over.value = false;
+            return;
+        }
+
+        if (event.payload.type === "over") {
+            drag_over.value = true;
+            return;
+        }
+        if (event.payload.type === "drop") {
+            drag_over.value = false;
+            let path = event.payload.paths[0];
+            if (isArchive(path)) {
+            } else {
+                toast.warning("未知格式", 1000);
+            }
+            return;
+        }
+    });
+
+    function isArchive(path: string): boolean {
+        let ext = path.split(".").pop()?.toLowerCase();
+        if (!ext) return false;
+        return archive_exts.includes(ext);
+    }
+});
+
+onUnmounted(() => {
+    unlisten();
+});
 </script>
