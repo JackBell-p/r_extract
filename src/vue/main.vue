@@ -144,7 +144,7 @@
                                     >
                                         <span class="sr-only">切换主题</span>
                                         <span
-                                            class="inline-block h-6 w-6 transform rounded-full bg-white transition-transform duration-200 ease-in-out shadow-sm flex items-center justify-center"
+                                            class="h-6 w-6 transform rounded-full bg-white transition-transform duration-200 ease-in-out shadow-sm flex items-center justify-center"
                                             :class="
                                                 is_dark_mode
                                                     ? 'translate-x-7'
@@ -239,24 +239,12 @@
                                     class="text-sm divide-y divide-app-border"
                                 >
                                     <tr
-                                        v-for="(file, index) in files"
-                                        :key="index"
+                                        v-for="file in files"
                                         class="group hover:bg-app-surface transition cursor-default select-none"
-                                        :class="{
-                                            'bg-app-primary/10':
-                                                selected_files.includes(index),
-                                        }"
-                                        @click="toggle_select(index, $event)"
                                     >
                                         <td
                                             class="px-4 py-3 flex items-center gap-3"
                                         >
-                                            <i
-                                                :class="
-                                                    get_file_icon(file.type)
-                                                "
-                                                class="text-xl opacity-80 group-hover:opacity-100"
-                                            ></i>
                                             <span
                                                 class="text-app-text font-medium truncate max-w-[200px]"
                                                 >{{ file.name }}</span
@@ -279,11 +267,8 @@
                     <!-- Bottom Action Bar (Visible only when files exist and not on the settings page) -->
                     <div
                         v-if="files.length > 0 && current_view !== 'settings'"
-                        class="h-16 border-t border-app-border bg-app-sidebar px-6 flex items-center justify-between transition-colors duration-300"
+                        class="h-16 border-t border-app-border bg-app-sidebar px-6 flex items-center justify-end transition-colors duration-300"
                     >
-                        <div class="text-xs text-app-mute">
-                            已选中 {{ selected_files.length }} 项
-                        </div>
                         <div class="flex items-center gap-3">
                             <button
                                 @click="files = []"
@@ -336,20 +321,18 @@ import { toast } from "../ts/utils/toast.ts";
 
 interface FileItem {
     name: string;
-    size: number;
+    size: string;
     type: string;
-    length: number;
 }
 
 let current_view = ref("home");
 let is_dark_mode = ref(false);
 let drag_over = ref(false);
 let files = ref<FileItem[]>([]);
-let selected_files = ref([]);
 let processing = ref(false);
 let rect: DOMRect;
 let unlisten: UnlistenFn;
-let archive_exts = ["zip", "rar", "7z"];
+const archive_exts = ["zip", "rar", "7z"];
 
 function close_app() {
     invoke("exit");
@@ -360,38 +343,34 @@ function toggle_theme() {
     document.body.classList.toggle("dark-theme", is_dark_mode.value);
 }
 
-function handle_drop(payload: DragEvent) {
-    drag_over.value = false;
-
-    console.log(payload);
-}
-
 function open_file() {
-    toast.success("good", 4000);
+    for (let i = 0; i < 30; i++) {
+        files.value.push({
+            name: "hello.txt",
+            size: "30",
+            type: "txt",
+        });
+    }
 }
-
-function toggle_select(index: number, event: MouseEvent) {}
-
-function get_file_icon(file_type: string) {}
 
 function minimize() {
     invoke("minimize");
 }
 
 onMounted(async () => {
-    let drop_zone = document.getElementById("drop-zone");
+    const drop_zone = document.getElementById("drop-zone");
     if (!drop_zone) return;
 
     rect = drop_zone.getBoundingClientRect();
 
-    unlisten = await getCurrentWebview().onDragDropEvent((event) => {
+    unlisten = await getCurrentWebview().onDragDropEvent(async (event) => {
         if (event.payload.type === "leave") {
             drag_over.value = false;
             return;
         }
 
-        let { x, y } = event.payload.position;
-        let inside =
+        const { x, y } = event.payload.position;
+        const inside =
             x >= rect.left &&
             x <= rect.right &&
             y >= rect.top &&
@@ -408,8 +387,13 @@ onMounted(async () => {
         }
         if (event.payload.type === "drop") {
             drag_over.value = false;
-            let path = event.payload.paths[0];
+            const path = event.payload.paths[0];
             if (isArchive(path)) {
+                files.value.push({
+                    name: path.replace(/\\/g, "/").split("/").pop() || "",
+                    size: format_size(await get_file_size(path)),
+                    type: path.split(".").pop() || "",
+                });
             } else {
                 toast.warning("未知格式", 1000);
             }
@@ -418,9 +402,21 @@ onMounted(async () => {
     });
 
     function isArchive(path: string): boolean {
-        let ext = path.split(".").pop()?.toLowerCase();
+        const ext = path.split(".").pop()?.toLowerCase();
         if (!ext) return false;
         return archive_exts.includes(ext);
+    }
+
+    function format_size(bytes: number) {
+        if (bytes < 1024) return bytes + " B";
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+        if (bytes < 1024 * 1024 * 1024)
+            return (bytes / 1024 / 1024).toFixed(1) + " MB";
+        return (bytes / 1024 / 1024 / 1024).toFixed(1) + " GB";
+    }
+
+    async function get_file_size(path: string): Promise<number> {
+        return await invoke("get_file_size", { path });
     }
 });
 

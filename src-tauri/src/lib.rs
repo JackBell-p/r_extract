@@ -1,6 +1,7 @@
 use tauri::Manager;
 
 mod commands;
+mod compression;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -13,7 +14,12 @@ pub fn run() {
             }
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![commands::exit, commands::minimize])
+        .invoke_handler(tauri::generate_handler![
+            commands::exit,
+            commands::minimize,
+            commands::get_file_size,
+            compression::decompress
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
