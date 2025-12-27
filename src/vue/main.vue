@@ -278,8 +278,8 @@
                             </button>
                             <button
                                 class="px-6 py-2 bg-app-primary hover:opacity-90 text-white text-sm font-medium rounded-lg transition flex items-center gap-2"
+                                @click="decompress"
                             >
-                                <i class="ph-export"></i>
                                 <span>解压</span>
                             </button>
                         </div>
@@ -333,6 +333,7 @@ let processing = ref(false);
 let rect: DOMRect;
 let unlisten: UnlistenFn;
 const archive_exts = ["zip", "rar", "7z"];
+let g_path: string;
 
 function close_app() {
     invoke("exit");
@@ -389,6 +390,7 @@ onMounted(async () => {
             drag_over.value = false;
             const path = event.payload.paths[0];
             if (isArchive(path)) {
+                g_path = path;
                 files.value.push({
                     name: path.replace(/\\/g, "/").split("/").pop() || "",
                     size: format_size(await get_file_size(path)),
@@ -423,4 +425,12 @@ onMounted(async () => {
 onUnmounted(() => {
     unlisten();
 });
+
+function decompress() {
+    invoke("decompress", {
+        path: g_path,
+        dest: "F:/",
+        ext: g_path.split(".").pop()?.toLowerCase(),
+    });
+}
 </script>
