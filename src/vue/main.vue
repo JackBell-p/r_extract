@@ -36,7 +36,8 @@
                         <div
                             class="flex items-center gap-3 px-3 py-3 rounded-lg cursor-pointer transition-all duration-200 text-sm font-medium"
                             :class="
-                                current_view === 'home'
+                                current_view === 'home' ||
+                                current_view === 'extract_options'
                                     ? 'bg-app-primary text-white shadow-md'
                                     : 'text-app-mute hover:bg-app-surface-hover hover:text-app-text'
                             "
@@ -278,10 +279,116 @@
                             </button>
                             <button
                                 class="px-6 py-2 bg-app-primary hover:opacity-90 text-white text-sm font-medium rounded-lg transition flex items-center gap-2"
-                                @click="decompress"
+                                @click="current_view = 'extract_options'"
                             >
-                                <span>解压</span>
+                                <span>下一步</span>
                             </button>
+                        </div>
+                    </div>
+                    <div
+                        v-else-if="current_view === 'extract_options'"
+                        class="p-8 max-w-2xl mx-auto w-full h-full flex flex-col animate-fade-in"
+                    >
+                        <h2
+                            class="text-2xl font-bold text-app-text mb-6 flex items-center gap-2"
+                        >
+                            解压选项
+                        </h2>
+
+                        <div class="space-y-8 flex-1">
+                            <!-- 1. Path Selection -->
+                            <div class="space-y-3">
+                                <label
+                                    class="text-sm font-semibold text-app-text flex items-center gap-2"
+                                >
+                                    <i
+                                        class="ph-folder-notch-open text-app-primary"
+                                    ></i>
+                                    解压路径
+                                </label>
+                                <div class="flex gap-3">
+                                    <div class="relative flex-1 group">
+                                        <input
+                                            type="text"
+                                            v-model="extract_path"
+                                            class="w-full bg-app-sidebar border border-app-border rounded-lg px-4 py-3 pl-10 text-sm text-app-text placeholder-app-mute focus:outline-none focus:border-app-primary focus:ring-1 focus:ring-app-primary transition-all"
+                                            placeholder="请选择解压目标文件夹..."
+                                        />
+                                        <i
+                                            class="ph-folder absolute left-3 top-1/2 -translate-y-1/2 text-app-mute group-focus-within:text-app-primary transition-colors"
+                                        ></i>
+                                    </div>
+                                    <button
+                                        class="px-5 py-2 bg-app-sidebar border border-app-border hover:bg-app-surface text-app-text hover:border-app-mute rounded-lg transition-all text-sm font-medium whitespace-nowrap shadow-sm"
+                                    >
+                                        浏览...
+                                    </button>
+                                </div>
+                                <p class="text-xs text-app-mute ml-1">
+                                    文件将被解压到此文件夹中，如文件夹不存在将自动创建。
+                                </p>
+                            </div>
+
+                            <!-- 2. Password Input -->
+                            <div class="space-y-3">
+                                <label
+                                    class="text-sm font-semibold text-app-text flex items-center gap-2"
+                                >
+                                    <i class="ph-lock-key text-app-primary"></i>
+                                    解压密码
+                                </label>
+                                <div class="relative group">
+                                    <input
+                                        :type="
+                                            show_password ? 'text' : 'password'
+                                        "
+                                        v-model="extract_password"
+                                        class="w-full bg-app-sidebar border border-app-border rounded-lg px-4 py-3 pl-10 text-sm text-app-text placeholder-app-mute focus:outline-none focus:border-app-primary focus:ring-1 focus:ring-app-primary transition-all"
+                                        placeholder="如果压缩包无密码，请留空"
+                                    />
+                                    <i
+                                        class="ph-key absolute left-3 top-1/2 -translate-y-1/2 text-app-mute group-focus-within:text-app-primary transition-colors"
+                                    ></i>
+                                    <button
+                                        @click="show_password = !show_password"
+                                        class="absolute right-3 top-1/2 -translate-y-1/2 text-app-mute hover:text-app-text transition-colors p-1 rounded hover:bg-app-surface"
+                                        tabindex="-1"
+                                    >
+                                        <i
+                                            :class="
+                                                show_password
+                                                    ? 'ph-eye-slash'
+                                                    : 'ph-eye'
+                                            "
+                                            class="text-lg"
+                                        ></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer Buttons for Extraction View -->
+                        <div
+                            class="mt-auto pt-6 border-t border-app-border flex justify-between items-center"
+                        >
+                            <div class="text-xs text-app-mute">
+                                准备解压 {{ files.length }} 个文件
+                            </div>
+                            <div class="flex gap-3">
+                                <button
+                                    @click="current_view = 'home'"
+                                    class="px-6 py-2.5 rounded-lg text-sm font-medium text-app-mute hover:text-app-text hover:bg-app-surface transition-colors"
+                                >
+                                    上一步
+                                </button>
+                                <button
+                                    @click="decompress"
+                                    class="px-8 py-2.5 bg-app-primary hover:bg-indigo-500 text-white text-sm font-medium rounded-lg shadow-lg shadow-indigo-500/20 transition-all active:scale-95 flex items-center gap-2"
+                                >
+                                    <i class="ph-play-circle text-lg"></i>
+                                    <span>开始解压</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </main>
@@ -334,6 +441,9 @@ let rect: DOMRect;
 let unlisten: UnlistenFn;
 const archive_exts = ["zip", "rar", "7z"];
 let g_path: string;
+let extract_path = ref("");
+let show_password = ref(false);
+let extract_password = ref("");
 
 function close_app() {
     invoke("exit");
