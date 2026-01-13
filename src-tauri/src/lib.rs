@@ -7,6 +7,7 @@ mod compression;
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_dialog::init())
         .setup(|app| {
             if let Some(window) = app.get_webview_window("main") {
                 let _ = window.set_maximizable(false);
@@ -18,6 +19,8 @@ pub fn run() {
             commands::exit,
             commands::minimize,
             commands::get_file_size,
+            commands::pick_folder,
+            commands::pick_file,
             compression::decompress
         ])
         .run(tauri::generate_context!())

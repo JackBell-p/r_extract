@@ -181,9 +181,6 @@
                                 <label
                                     class="text-sm font-semibold text-app-text flex items-center gap-2"
                                 >
-                                    <i
-                                        class="ph-folder-notch-open text-app-primary"
-                                    ></i>
                                     解压路径
                                 </label>
 
@@ -195,15 +192,13 @@
                                             class="w-full bg-app-sidebar border border-app-border rounded-lg px-4 py-3 pl-10 text-sm text-app-text placeholder-app-mute focus:outline-none focus:border-app-primary focus:ring-1 focus:ring-app-primary transition-all"
                                             placeholder="请选择解压目标文件夹..."
                                         />
-                                        <i
-                                            class="ph-folder absolute left-3 top-1/2 -translate-y-1/2 text-app-mute group-focus-within:text-app-primary transition-colors"
-                                        ></i>
                                     </div>
 
                                     <button
-                                        class="px-5 py-2 bg-app-sidebar border border-app-border hover:bg-app-surface text-app-text hover:border-app-mute rounded-lg transition-all text-sm font-medium whitespace-nowrap shadow-sm"
+                                        @click="pick_folder"
+                                        class="px-8 py-2.5 bg-app-primary hover:bg-indigo-500 text-white text-sm font-medium rounded-lg shadow-lg shadow-indigo-500/20 transition-all active:scale-95"
                                     >
-                                        浏览...
+                                        浏览
                                     </button>
                                 </div>
 
@@ -217,7 +212,6 @@
                                 <label
                                     class="text-sm font-semibold text-app-text flex items-center gap-2"
                                 >
-                                    <i class="ph-lock-key text-app-primary"></i>
                                     解压密码
                                 </label>
 
@@ -230,9 +224,6 @@
                                         class="w-full bg-app-sidebar border border-app-border rounded-lg px-4 py-3 pl-10 text-sm text-app-text placeholder-app-mute focus:outline-none focus:border-app-primary focus:ring-1 focus:ring-app-primary transition-all"
                                         placeholder="如果压缩包无密码，请留空"
                                     />
-                                    <i
-                                        class="ph-key absolute left-3 top-1/2 -translate-y-1/2 text-app-mute group-focus-within:text-app-primary transition-colors"
-                                    ></i>
 
                                     <button
                                         @click="show_password = !show_password"
@@ -310,8 +301,7 @@
                             <p
                                 class="text-app-mute text-sm mb-8 text-center max-w-xs"
                             >
-                                或点击下方按钮选择文件, 支持 .zip, .rar, .7z
-                                等格式
+                                或点击下方按钮选择文件, 支持 .zip, .7z 等格式
                             </p>
 
                             <button
@@ -364,7 +354,7 @@
                                                 class="px-4 py-3 flex items-center gap-3"
                                             >
                                                 <span
-                                                    class="text-app-text font-medium truncate max-w-[200px]"
+                                                    class="text-app-text font-medium truncate max-w-50"
                                                     >{{ file.name }}</span
                                                 >
                                             </td>
@@ -454,8 +444,8 @@ let files = ref<FileItem[]>([]);
 let processing = ref(false);
 let rect: DOMRect;
 let unlisten: UnlistenFn;
-const archive_exts = ["zip", "rar", "7z"];
-let g_path: string;
+const archive_exts = ["zip", "7z"];
+let file_path: string;
 let extract_path = ref("");
 let show_password = ref(false);
 let extract_password = ref("");
@@ -469,12 +459,16 @@ function toggle_theme() {
     document.body.classList.toggle("dark-theme", is_dark_mode.value);
 }
 
-function open_file() {
-    for (let i = 0; i < 30; i++) {
+async function open_file() {
+    const path = await invoke<string>("pick_file");
+
+    if (path != "") {
+        file_path = path;
+
         files.value.push({
-            name: "hello.txt",
-            size: "30",
-            type: "txt",
+            name: path.replace(/\\/g, "/").split("/").pop() || "",
+            size: format_size(await get_file_size(path)),
+            type: path.split(".").pop() || "",
         });
     }
 }
@@ -515,7 +509,7 @@ onMounted(async () => {
             drag_over.value = false;
             const path = event.payload.paths[0];
             if (isArchive(path)) {
-                g_path = path;
+                file_path = path;
                 files.value.push({
                     name: path.replace(/\\/g, "/").split("/").pop() || "",
                     size: format_size(await get_file_size(path)),
@@ -533,34 +527,38 @@ onMounted(async () => {
         if (!ext) return false;
         return archive_exts.includes(ext);
     }
-
-    function format_size(bytes: number) {
-        if (bytes < 1024) return bytes + " B";
-        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
-        if (bytes < 1024 * 1024 * 1024)
-            return (bytes / 1024 / 1024).toFixed(1) + " MB";
-        return (bytes / 1024 / 1024 / 1024).toFixed(1) + " GB";
-    }
-
-    async function get_file_size(path: string): Promise<number> {
-        return await invoke("get_file_size", { path });
-    }
 });
+
+function format_size(bytes: number) {
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+    if (bytes < 1024 * 1024 * 1024)
+        return (bytes / 1024 / 1024).toFixed(1) + " MB";
+    return (bytes / 1024 / 1024 / 1024).toFixed(1) + " GB";
+}
+
+async function get_file_size(path: string): Promise<number> {
+    return await invoke("get_file_size", { path });
+}
 
 onUnmounted(() => {
     unlisten();
 });
 
 function decompress() {
-    console.log(g_path);
-    console.log(extract_password);
-    console.log(extract_path);
-    // invoke("decompress", {
-    //     path: g_path,
-    //     dest: "F:/",
-    //     ext: g_path.split(".").pop()?.toLowerCase(),
-    // });
+    if (extract_path.value === "") {
+        toast.warning("请选择解压路径!", 1000);
+        return;
+    }
+    invoke("decompress", {
+        path: file_path,
+        dest: extract_path.value,
+        ext: file_path.split(".").pop()?.toLowerCase(),
+    });
 }
 
-function pick_folder() {}
+async function pick_folder() {
+    const path = await invoke("pick_folder");
+    extract_path.value = path as string;
+}
 </script>
